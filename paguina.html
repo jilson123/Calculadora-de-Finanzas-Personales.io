@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Finanzas Personales</title>
+    <style>
+        /* Fondo con imagen */
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-image: url('https://images.unsplash.com/photo-1529156069898-49953e39b3ac?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&q=80&w=1920');
+            background-size: cover;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            height: 100vh;
+            background-attachment: fixed;
+        }
+        h1 {
+            color: #ffffff;
+            font-size: 2.5em;
+            background: rgba(74, 144, 226, 0.8);
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Contenedor principal */
+        .container {
+            max-width: 500px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px 30px;
+            border-radius: 12px;
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        /* Elementos de entrada */
+        input[type="text"], input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            font-size: 1em;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            transition: border-color 0.3s;
+        }
+        input[type="text"]:focus, input[type="number"]:focus {
+            border-color: #4A90E2;
+            outline: none;
+        }
+
+        /* Estilo del botón */
+        button {
+            width: 100%;
+            padding: 12px;
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #fff;
+            background-color: #4A90E2;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.15);
+        }
+        button:hover {
+            background-color: #357ABD;
+            transform: scale(1.03);
+        }
+
+        /* Saldo */
+        .balance {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #28A745;
+            margin: 20px 0;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        /* Contenedor de transacciones */
+        .transactions-container {
+            margin-top: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+            background: #f7f7f7;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .transaction {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px;
+            margin: 5px 0;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            font-size: 1em;
+        }
+        .transaction:hover {
+            background-color: #ececec;
+        }
+        .transaction.income {
+            color: #28A745;
+        }
+        .transaction.expense {
+            color: #E53E3E;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Calculadora de Finanzas Personales</h1>
+    <div class="container">
+        <div class="balance">
+            Saldo Actual: <span id="balance">0.00 €</span>
+        </div>
+        
+        <input type="text" id="concept" placeholder="Descripción de la transacción" required>
+        <input type="number" id="amount" placeholder="Monto (use negativo para gastos)" required>
+        <button onclick="addTransaction()">Agregar Transacción</button>
+        
+        <div class="transactions-container" id="transactionHistory"></div>
+    </div>
+
+    <script>
+        let balance = 0;
+        const transactions = [];
+
+        function addTransaction() {
+            const conceptInput = document.getElementById("concept").value.trim();
+            const amountInput = parseFloat(document.getElementById("amount").value);
+            
+            if (!conceptInput || isNaN(amountInput)) {
+                alert("Introduce una descripción válida y un monto.");
+                return;
+            }
+
+            const transaction = { concept: conceptInput, amount: amountInput };
+            transactions.push(transaction);
+            balance += amountInput;
+
+            updateBalance();
+            renderTransactions();
+
+            document.getElementById("concept").value = '';
+            document.getElementById("amount").value = '';
+        }
+
+        function updateBalance() {
+            document.getElementById("balance").textContent = balance.toFixed(2) + " €";
+            document.getElementById("balance").style.color = balance >= 0 ? '#28A745' : '#E53E3E';
+        }
+
+        function renderTransactions() {
+            const transactionHistory = document.getElementById("transactionHistory");
+            transactionHistory.innerHTML = '';
+
+            transactions.forEach((transaction) => {
+                const transactionElement = document.createElement("div");
+                transactionElement.classList.add("transaction");
+                transactionElement.classList.add(transaction.amount >= 0 ? "income" : "expense");
+                
+                transactionElement.innerHTML = `
+                    <span>${transaction.concept}</span>
+                    <span>${transaction.amount.toFixed(2)} €</span>
+                `;
+                transactionHistory.appendChild(transactionElement);
+            });
+        }
+    </script>
+
+</body>
+</html>
